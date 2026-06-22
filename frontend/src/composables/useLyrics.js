@@ -1,8 +1,8 @@
 import { nextTick } from 'vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
 export function useLyrics(options) {
-  const { apiBase, lyricLines, currentLyricIndex, triggerBeat, lyricScrollRef } = options
+  const { lyricLines, currentLyricIndex, triggerBeat, lyricScrollRef } = options
 
   const parseLyric = (yrc) => {
     if (!yrc) return null
@@ -49,7 +49,7 @@ export function useLyrics(options) {
   }
 
   const loadLyric = (songId) => {
-    axios.get(`${apiBase}/lyric/new`, { params: { id: songId } })
+    request.get(`/lyric/new`, { params: { id: songId } })
       .then(res => {
         const yrc = res.data?.yrc?.lyric
         const lrc = res.data?.lrc?.lyric

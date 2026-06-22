@@ -1,11 +1,11 @@
 import { onMounted, onUnmounted, ref } from 'vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
 export function useAudioPlayer(options) {
   const {
     isPlaying, currentTrack, volume, currentTime, duration,
     currentTimeStr, durationStr, queue, currentTrackIndex,
-    triggerBeat, apiBase, syncLyric
+    triggerBeat, syncLyric
   } = options
 
   let audio = null
@@ -38,7 +38,7 @@ export function useAudioPlayer(options) {
     }
 
     if (userId) {
-      axios.post(`${apiBase}/play-history`, {
+      request.post(`/play-history`, {
         userId: Number(userId),
         songId: currentSong.id,
         songName: currentSong.name,
@@ -62,7 +62,6 @@ export function useAudioPlayer(options) {
     const track = queue.value[next]
     if (audio) {
       audio.pause()
-      audio.src = ''
     }
     currentTrackIndex.value = next
     currentTrack.value = track.title + ' - ' + track.artist
@@ -79,7 +78,6 @@ export function useAudioPlayer(options) {
     const track = queue.value[prev]
     if (audio) {
       audio.pause()
-      audio.src = ''
     }
     currentTrackIndex.value = prev
     currentTrack.value = track.title + ' - ' + track.artist
@@ -109,7 +107,7 @@ export function useAudioPlayer(options) {
     const userId = localStorage.getItem('music_userId')
     console.log('准备播放队列歌曲', track)
 
-    axios.get(`${apiBase}/play-url`, { params: { songId: track.id, userId } })
+    request.get(`/play-url`, { params: { songId: track.id, userId } })
       .then(res => {
         const url = res.data && res.data.url
         if (!url) {
@@ -175,7 +173,6 @@ export function useAudioPlayer(options) {
     
     if (audio) {
       audio.pause()
-      audio.src = ''
     }
     currentTrackIndex.value = 0
     currentTrack.value = clicked.title + ' - ' + clicked.artist
@@ -192,7 +189,6 @@ export function useAudioPlayer(options) {
   const stop = () => {
     if (audio) {
       audio.pause()
-      audio.src = ''
     }
   }
 

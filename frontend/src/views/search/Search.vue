@@ -33,10 +33,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '@/utils/request'
 
 const router = useRouter()
-const apiBase = 'http://localhost:8080/api/music'
 
 const keyword = ref('')
 const songs = ref([])
@@ -53,7 +52,7 @@ const search = async () => {
 
   loading.value = true
   try {
-    const res = await axios.get(`${apiBase}/search`, {
+    const res = await request.get(`/search`, {
       params: { keywords: keyword.value, userId: Number(userId) }
     })
     songs.value = res.data?.songs || []

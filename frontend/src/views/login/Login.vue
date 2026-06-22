@@ -115,10 +115,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '@/utils/request'
 
 const router = useRouter()
-const apiBase = 'http://localhost:8080/api/music'
 
 const loginMethod = ref('qrcode')
 const account = ref('')
@@ -148,22 +147,27 @@ const switchMode = () => {
   mode.value = mode.value === 'login' ? 'register' : 'login'
 }
 
-const submit = () => {
+const submit = async () => {
   if (!cookie.value.trim()) {
     alert('请先填写 Cookie')
     return
   }
   loading.value = true
 
-  axios.post(`${apiBase}/${mode.value === 'register' ? 'register' : 'login'}`, {
-    account: account.value,
-    password: password.value,
-    cookie: cookie.value
-  }).then(res => {
+  try {
+    const res = await request.post(`/${mode.value === 'register' ? 'register' : 'login'}`, {
+      account: account.value,
+      password: password.value,
+      cookie: cookie.value
+    })
     loading.value = false
     const userId = res.data?.userId
+    const nickname = res.data?.nickname
     if (userId) {
       localStorage.setItem('music_userId', userId)
+      if (nickname) {
+        localStorage.setItem('user_nickname', nickname)
+      }
       localStorage.setItem('netease_cookie', cookie.value)
       localStorage.setItem('netease_cookie_timestamp', Date.now())
 
@@ -174,10 +178,10 @@ const submit = () => {
     } else {
       alert((mode.value === 'register' ? '注册失败: ' : '登录失败: ') + (res.data?.message || 'Cookie 验证失败'))
     }
-  }).catch(err => {
+  } catch (err) {
     loading.value = false
-    alert('请求失败: ' + err.message)
-  })
+    // interceptor 已经 alert 了具体信息，这里不强求，但可以保留
+  }
 }
 
 const checkCookieStatus = async () => {
@@ -185,7 +189,7 @@ const checkCookieStatus = async () => {
   if (!storedCookie) return
 
   try {
-    const res = await axios.get(`${apiBase}/cookie-status`, { params: { cookie: storedCookie } })
+    const res = await request.get(`/cookie-status`, { params: { cookie: storedCookie } })
     if (res.data.valid) {
       localStorage.setItem('netease_cookie_last_check', Date.now())
     } else {
@@ -231,7 +235,7 @@ const handleQrLoginSuccess = async (scannedCookie) => {
   }
 
   try {
-    const res = await axios.post(`${apiBase}/qr-login`, null, { 
+    const res = await request.post(`/qr-login`, null, { 
       params: { cookie: scannedCookie }
     })
     
@@ -261,7 +265,7 @@ const startQrCodePolling = () => {
 
   const checkStatus = async () => {
     try {
-      const res = await axios.get(`${apiBase}/qr-check`, { params: { key: qrCodeKey.value } })
+      const res = await request.get(`/qr-check`, { params: { key: qrCodeKey.value } })
       const { code, message, cookie: resCookie } = res.data
 
       switch (code) {
@@ -300,11 +304,11 @@ const generateQrCode = async () => {
   qrCodeStatus.value = '正在生成二维码...'
 
   try {
-    const keyRes = await axios.get(`${apiBase}/qr-key`)
+    const keyRes = await request.get(`/qr-key`, { params: { timestamp: Date.now() } })
     if (!keyRes.data.success) throw new Error(keyRes.data.errorMessage || '获取二维码 Key 失败')
     
     const qrKey = keyRes.data.unikey
-    const imgRes = await axios.get(`${apiBase}/qr-create`, { params: { key: qrKey } })
+    const imgRes = await request.get(`/qr-create`, { params: { key: qrKey, timestamp: Date.now() } })
     if (!imgRes.data.success) throw new Error(imgRes.data.errorMessage || '生成二维码失败')
 
     qrCodeKey.value = qrKey

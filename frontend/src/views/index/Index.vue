@@ -78,7 +78,7 @@
             </div>
 
             <!-- Queue List -->
-            <div class="scroll-view queue-list" :style="{ height: queueHeight + 'px', overflow: 'hidden', transition: 'height 0.4s ease' }">
+            <div class="scroll-view queue-list" :style="{ height: queueHeight + 'px', overflowY: 'auto', transition: 'height 0.4s ease' }">
               <div
                 class="queue-item"
                 :class="{ active: index === currentTrackIndex }"
@@ -129,7 +129,7 @@
             </div>
 
             <div v-if="isAiThinking" id="msg-thinking" class="message-group agent-message">
-              <span class="msg-author">CLAUDIO</span>
+              <span class="msg-author">MELODIO</span>
               <div class="message">
                 <img class="msg-avatar ai-avatar" src="https://img.yzcdn.cn/vant/cat.jpeg" />
                 <div class="msg-content thinking-content">
@@ -159,7 +159,7 @@
           </div>
           
           <div class="footer">
-            <span>CLAUDIO FM.</span>
+            <span>MELODIO FM.</span>
             <span>CONNECTED.</span>
           </div>
           
@@ -220,14 +220,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import request from '@/utils/request'
 import { useCanvasClock } from '../../composables/useCanvasClock'
 import { useAudioPlayer } from '../../composables/useAudioPlayer'
 import { useChat } from '../../composables/useChat'
 import { useLyrics } from '../../composables/useLyrics'
 
 const router = useRouter()
-const apiBase = 'http://localhost:8080/api/music'
-
 const theme = ref('dark')
 const containerClass = ref('container genre-default')
 const isTyping = ref(false)
@@ -263,7 +262,7 @@ const lyricScrollRef = ref(null)
 const { triggerBeat } = useCanvasClock({ isPlaying, theme, timeDigits })
 
 const { loadLyric, syncLyric } = useLyrics({
-  apiBase, lyricLines, currentLyricIndex, triggerBeat, lyricScrollRef
+  lyricLines, currentLyricIndex, triggerBeat, lyricScrollRef
 })
 
 const {
@@ -273,7 +272,7 @@ const {
 } = useAudioPlayer({
   isPlaying, currentTrack, volume, currentTime, duration,
   currentTimeStr, durationStr, queue, currentTrackIndex,
-  triggerBeat, apiBase, syncLyric, loadLyric
+  triggerBeat, syncLyric, loadLyric
 })
 
 const goToLogin = () => {
@@ -285,7 +284,7 @@ const goToLogin = () => {
 }
 
 const { chatScrollRef, loadGreeting, sendChat, scrollChatToBottom } = useChat({
-  apiBase, messages, chatInput, isAiThinking, queue, currentTrack,
+  messages, chatInput, isAiThinking, queue, currentTrack,
   currentTrackIndex, showPlayerView, playerTab,
   playNext, playPrev, loadAndPlayTrack, loadAndPlayById, stopAudio,
   goToLogin,
@@ -334,7 +333,25 @@ const closePlayerView = () => { showPlayerView.value = false; setTimeout(() => p
 const toggleQueue = () => { showQueue.value = !showQueue.value; queueHeight.value = showQueue.value ? 120 : 0 }
 const onInputFocus = () => { isTyping.value = true }
 const onInputBlur = () => { isTyping.value = false }
-const switchPlayerTab = (t) => { playerTab.value = t }
+const loadPlayHistory = () => {
+  const userId = localStorage.getItem('music_userId')
+  if (userId) {
+    request.get('/play-history', { params: { userId } })
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          playHistory.value = res.data
+        }
+      })
+      .catch(err => console.error('加载历史失败', err))
+  }
+}
+
+const switchPlayerTab = (t) => { 
+  playerTab.value = t 
+  if (t === 1) {
+    loadPlayHistory()
+  }
+}
 const seekToLyric = (timeMs, idx) => { seekToAudio(timeMs / 1000); currentLyricIndex.value = idx }
 const playHistoryItem = (item) => { loadAndPlayById(item.songId) }
 

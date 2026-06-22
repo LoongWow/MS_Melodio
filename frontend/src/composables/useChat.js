@@ -1,9 +1,9 @@
 import { ref, nextTick } from 'vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
 export function useChat(options) {
   const {
-    apiBase, messages, chatInput, isAiThinking, queue, currentTrack,
+    messages, chatInput, isAiThinking, queue, currentTrack,
     currentTrackIndex, showPlayerView, playerTab,
     playNext, playPrev, loadAndPlayTrack, loadAndPlayById, stopAudio
   } = options
@@ -19,7 +19,7 @@ export function useChat(options) {
   }
 
   const loadGreeting = (userId) => {
-    axios.get(`${apiBase}/greeting`, { params: { userId: Number(userId) } })
+    request.get(`/greeting`, { params: { userId: Number(userId) } })
       .then(res => {
         const reply = res.data?.reply || ''
         const songs = res.data?.songs || []
@@ -27,7 +27,7 @@ export function useChat(options) {
         const greetingMsg = {
           id: Date.now(),
           role: 'assistant',
-          author: 'CLAUDIO',
+          author: 'MELODIO',
           content: reply
         }
 
@@ -68,7 +68,7 @@ export function useChat(options) {
     isAiThinking.value = true
     scrollChatToBottom()
 
-    axios.post(`${apiBase}/chat`, { message, userId: Number(userId) })
+    request.post(`/chat`, { message, userId: Number(userId) })
       .then(res => {
         isAiThinking.value = false
         
@@ -83,7 +83,7 @@ export function useChat(options) {
           messages.value.push({
             id: Date.now() + 1,
             role: 'assistant',
-            author: 'CLAUDIO',
+            author: 'MELODIO',
             content
           })
           scrollChatToBottom()
@@ -159,7 +159,7 @@ export function useChat(options) {
           return
         }
 
-        const nextMessages = [...messages.value, { id: Date.now() + 1, role: 'assistant', author: 'CLAUDIO', content: reply }]
+        const nextMessages = [...messages.value, { id: Date.now() + 1, role: 'assistant', author: 'MELODIO', content: reply }]
 
         if (songs.length) {
           queue.value = songs.map(s => ({ id: s.id, title: s.name, artist: s.artist || 'Unknown' }))

@@ -24,8 +24,8 @@
            </div>
 
            <div class="footer">
-             <span>CLAUDIO FM.</span>
-             <span>系统已就绪</span>
+             <span>MELODIO FM.</span>
+             <span>CONNECTED.</span>
            </div>
            
         </div>
