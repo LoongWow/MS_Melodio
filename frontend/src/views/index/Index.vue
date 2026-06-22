@@ -172,6 +172,7 @@
                 <span class="tab" :class="{ active: playerTab === 0 }" @click="switchPlayerTab(0)">LYRICS</span>
                 <span class="tab" :class="{ active: playerTab === 1 }" @click="switchPlayerTab(1)">HISTORY</span>
               </div>
+              <span v-show="playerTab === 1 && playHistory.length > 0" class="clear-history-btn" @click="clearPlayHistory">清空历史</span>
               <div class="drawer-close-btn" @click="closePlayerView">▼</div>
             </div>
 
@@ -343,6 +344,22 @@ const loadPlayHistory = () => {
         }
       })
       .catch(err => console.error('加载历史失败', err))
+  }
+}
+
+const clearPlayHistory = () => {
+  const userId = localStorage.getItem('music_userId')
+  if (!userId) return
+  
+  if (confirm('确定要清空所有播放记录吗？一旦清空将无法恢复。')) {
+    request.delete(`/play-history?userId=${userId}`)
+      .then(() => {
+        playHistory.value = []
+      })
+      .catch(err => {
+        console.error('清空历史失败', err)
+        alert('清空历史失败')
+      })
   }
 }
 

@@ -12,6 +12,7 @@ import org.example.service.QrLoginService;
 import org.example.service.UserPreferenceService;
 import org.example.tools.MusicTools;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -212,6 +213,15 @@ public class MusicController {
         }
         List<PlayHistory> history = playHistoryService.getUniqueRecentHistory(userId);
         return ResponseEntity.ok(history);
+    }
+
+    @DeleteMapping("/play-history")
+    public ResponseEntity<?> clearPlayHistory(@RequestParam Long userId) {
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        playHistoryService.clearHistory(userId);
+        return ResponseEntity.ok(Map.of("success", true, "message", "播放历史已清空"));
     }
 
 }

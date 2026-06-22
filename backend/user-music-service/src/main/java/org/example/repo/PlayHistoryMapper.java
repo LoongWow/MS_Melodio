@@ -33,4 +33,7 @@ public interface PlayHistoryMapper {
     
     @Update("UPDATE play_history SET play_duration=#{playDuration}, completed=#{completed} WHERE id=#{id}")
     void update(PlayHistory playHistory);
+
+    @Delete("DELETE FROM play_history WHERE user_id = #{userId}")
+    void deleteByUserId(@Param("userId") Long userId);
 }

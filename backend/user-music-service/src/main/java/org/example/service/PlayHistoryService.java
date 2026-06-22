@@ -108,4 +108,13 @@ public class PlayHistoryService {
         return distinctHistory;
     }
 
+    /**
+     * 清空用户所有的播放历史
+     */
+    @Transactional
+    public void clearHistory(Long userId) {
+        playHistoryMapper.deleteByUserId(userId);
+        log.info("[MusicMemory] 清空听歌历史: userId={}", userId);
+    }
+
 }
