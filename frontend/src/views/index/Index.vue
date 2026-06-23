@@ -226,9 +226,10 @@ import { useCanvasClock } from '../../composables/useCanvasClock'
 import { useAudioPlayer } from '../../composables/useAudioPlayer'
 import { useChat } from '../../composables/useChat'
 import { useLyrics } from '../../composables/useLyrics'
+import { useTheme } from '../../composables/useTheme'
 
 const router = useRouter()
-const theme = ref('dark')
+const { theme, toggleTheme } = useTheme()
 const containerClass = ref('container genre-default')
 const isTyping = ref(false)
 const keyboardHeight = ref(0)
@@ -328,7 +329,6 @@ onUnmounted(() => {
   if (timeInterval) clearInterval(timeInterval);
 })
 
-const toggleTheme = (t) => { theme.value = t }
 const openPlayerView = () => { showPlayerView.value = true; setTimeout(scrollChatToBottom, 400) }
 const closePlayerView = () => { showPlayerView.value = false; setTimeout(() => playerTab.value = 0, 410) }
 const toggleQueue = () => { showQueue.value = !showQueue.value; queueHeight.value = showQueue.value ? 120 : 0 }

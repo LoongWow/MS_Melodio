@@ -1,5 +1,10 @@
 <template>
-  <div class="page-wrapper dark">
+  <div class="page-wrapper" :class="theme">
+    <transition name="toast-fade">
+      <div v-if="toastMessage" class="toast-popup">
+        {{ toastMessage }}
+      </div>
+    </transition>
     <div class="glow-wrapper">
       <div class="container">
         <div class="content">
@@ -10,7 +15,17 @@
 
            <div class="profile-section">
               <img class="avatar-large" src="https://img.yzcdn.cn/vant/cat.jpeg">
-              <span class="nickname">{{nickname}}</span>
+              
+              <div v-if="!isEditingNickname" class="nickname-container">
+                <span class="nickname">{{nickname}}</span>
+                <span class="edit-icon" @click="startEditNickname" title="修改名称">✎</span>
+              </div>
+              <div v-else class="nickname-edit-container">
+                <input type="text" v-model="editNicknameValue" class="nickname-input" placeholder="输入新昵称" @keyup.enter="confirmEditNickname" />
+                <span class="confirm-icon" @click="confirmEditNickname" title="确认">✔</span>
+                <span class="cancel-icon" @click="cancelEditNickname" title="取消">✖</span>
+              </div>
+
               <span class="user-id">用户 ID: {{userId}}</span>
            </div>
 
@@ -37,10 +52,27 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import request from '@/utils/request'
+import { useTheme } from '@/composables/useTheme'
 
 const router = useRouter()
 const nickname = ref('加载中...')
 const userId = ref('---')
+const { theme } = useTheme()
+
+const isEditingNickname = ref(false)
+const editNicknameValue = ref('')
+
+const toastMessage = ref('')
+let toastTimer = null
+
+const showToast = (msg) => {
+  toastMessage.value = msg
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => {
+    toastMessage.value = ''
+  }, 2500)
+}
 
 onMounted(() => {
   const storedUserId = localStorage.getItem('music_userId')
@@ -49,6 +81,40 @@ onMounted(() => {
   userId.value = storedUserId || '---'
   nickname.value = storedNickname || '网易云用户'
 })
+
+const startEditNickname = () => {
+  editNicknameValue.value = nickname.value
+  isEditingNickname.value = true
+}
+
+const cancelEditNickname = () => {
+  isEditingNickname.value = false
+}
+
+const confirmEditNickname = async () => {
+  const newNickname = editNicknameValue.value.trim()
+  if (!newNickname) {
+    showToast('昵称不能为空')
+    return
+  }
+  try {
+    const res = await request.post('/api/user/update-nickname', null, {
+      params: {
+        userId: Number(userId.value),
+        nickname: newNickname
+      }
+    })
+    if (res.status === 200) {
+      nickname.value = newNickname
+      localStorage.setItem('user_nickname', newNickname)
+      isEditingNickname.value = false
+      showToast('修改昵称成功！')
+    }
+  } catch (error) {
+    console.error('更新昵称失败:', error)
+    showToast('更新昵称失败')
+  }
+}
 
 const handleUpdateCookies = () => {
   if (confirm('是否前往登录页重新扫码或账号登录以更新 Cookies？')) {

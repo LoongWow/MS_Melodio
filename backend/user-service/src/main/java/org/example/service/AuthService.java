@@ -139,4 +139,8 @@ public class AuthService {
     public boolean userExists(Long musicUserId) {
         return userAccountMapper.findByMusicUserId(musicUserId).isPresent();
     }
+
+    public void updateNickname(Long musicUserId, String newNickname) {
+        userAccountMapper.updateNickname(musicUserId, newNickname);
+    }
 }

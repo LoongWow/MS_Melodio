@@ -164,4 +164,13 @@ public class UserController {
         boolean exists = authService.userExists(musicUserId);
         return ResponseEntity.ok(exists);
     }
+
+    @PostMapping("/update-nickname")
+    public ResponseEntity<String> updateNickname(@RequestParam Long userId, @RequestParam String nickname) {
+        if (userId == null || nickname == null || nickname.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid parameters");
+        }
+        authService.updateNickname(userId, nickname);
+        return ResponseEntity.ok("success");
+    }
 }

@@ -21,4 +21,7 @@ public interface UserAccountMapper {
             "ON DUPLICATE KEY UPDATE nickname=VALUES(nickname), avatar_url=VALUES(avatar_url), password=VALUES(password), updated_at=NOW()")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void save(UserAccount userAccount);
+
+    @Update("UPDATE user_account SET nickname = #{nickname}, updated_at = NOW() WHERE music_user_id = #{musicUserId}")
+    void updateNickname(@Param("musicUserId") Long musicUserId, @Param("nickname") String nickname);
 }
