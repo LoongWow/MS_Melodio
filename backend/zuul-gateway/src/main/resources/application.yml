@@ -15,6 +15,19 @@ eureka:
 
 zuul:
   routes:
+    # 用户服务路由（新增）
+    user-service:
+      path: /api/user/**
+      serviceId: user-service
+      stripPrefix: false
+
+    # 音乐服务路由（新增）
+    music-service:
+      path: /api/music/**
+      serviceId: music-service
+      stripPrefix: false
+
+    # AI 服务路由
     ai-chat:
       path: /api/music/chat
       serviceId: ai-service
@@ -34,10 +47,6 @@ zuul:
     ai-knowledge:
       path: /api/music/knowledge/**
       serviceId: ai-service
-      stripPrefix: false
-    user-music-service:
-      path: /api/music/**
-      serviceId: user-music-service
       stripPrefix: false
     ai-service:
       path: /api/ai/**

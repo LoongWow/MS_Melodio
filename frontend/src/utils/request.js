@@ -26,7 +26,7 @@ request.interceptors.response.use(
   (error) => {
     if (error.response) {
       const { status } = error.response;
-      
+
       if (status === 401) {
         // Clear local storage data on authentication failure
         localStorage.removeItem('music_userId');
@@ -34,9 +34,9 @@ request.interceptors.response.use(
         localStorage.removeItem('netease_cookie');
         localStorage.removeItem('netease_cookie_timestamp');
         localStorage.removeItem('genre_cache');
-        
+
         alert('登录状态已失效，请重新登录！');
-        
+
         // Redirect to login page
         window.location.href = '/login';
       } else if (status === 500) {
@@ -47,7 +47,7 @@ request.interceptors.response.use(
     } else {
       alert('网络连接失败，请检查网络设置。');
     }
-    
+
     return Promise.reject(error);
   }
 );

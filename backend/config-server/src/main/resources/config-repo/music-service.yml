@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 8083
 
 eureka:
   client:
@@ -18,13 +18,19 @@ spring:
     password: 123456
 
 mybatis:
-  mapper-locations: classpath:mapper/*.xml
   type-aliases-package: org.example.entity
   configuration:
     map-underscore-to-camel-case: true
 
 music:
-  ai:
-    api-key: ${DEEPSEEK_API_KEY:}
-    base-url: https://api.deepseek.com
-    model: deepseek-chat
+  api:
+    base-url: http://localhost:3000
+
+feign:
+  hystrix:
+    enabled: true
+
+logging:
+  level:
+    org.example.repo: DEBUG
+    org.example.client: DEBUG
