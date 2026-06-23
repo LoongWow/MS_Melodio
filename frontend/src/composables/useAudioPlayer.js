@@ -38,7 +38,7 @@ export function useAudioPlayer(options) {
     }
 
     if (userId) {
-      request.post(`/play-history`, {
+      request.post(`/api/music/play-history`, {
         userId: Number(userId),
         songId: currentSong.id,
         songName: currentSong.name,
@@ -107,7 +107,7 @@ export function useAudioPlayer(options) {
     const userId = localStorage.getItem('music_userId')
     console.log('准备播放队列歌曲', track)
 
-    request.get(`/play-url`, { params: { songId: track.id, userId } })
+    request.get(`/api/music/play-url`, { params: { songId: track.id, userId } })
       .then(res => {
         const url = res.data && res.data.url
         if (!url) {

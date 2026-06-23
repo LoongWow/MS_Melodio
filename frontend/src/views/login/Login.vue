@@ -155,7 +155,7 @@ const submit = async () => {
   loading.value = true
 
   try {
-    const res = await request.post(`/${mode.value === 'register' ? 'register' : 'login'}`, {
+    const res = await request.post(`/api/user/${mode.value === 'register' ? 'register' : 'login'}`, {
       account: account.value,
       password: password.value,
       cookie: cookie.value
@@ -189,7 +189,7 @@ const checkCookieStatus = async () => {
   if (!storedCookie) return
 
   try {
-    const res = await request.get(`/cookie-status`, { params: { cookie: storedCookie } })
+    const res = await request.get(`/api/user/cookie-status`, { params: { cookie: storedCookie } })
     if (res.data.valid) {
       localStorage.setItem('netease_cookie_last_check', Date.now())
     } else {
@@ -235,7 +235,7 @@ const handleQrLoginSuccess = async (scannedCookie) => {
   }
 
   try {
-    const res = await request.post(`/qr-login`, null, { 
+    const res = await request.post(`/api/user/qr-login`, null, { 
       params: { cookie: scannedCookie }
     })
     
@@ -265,7 +265,7 @@ const startQrCodePolling = () => {
 
   const checkStatus = async () => {
     try {
-      const res = await request.get(`/qr-check`, { params: { key: qrCodeKey.value } })
+      const res = await request.get(`/api/user/qr-check`, { params: { key: qrCodeKey.value } })
       const { code, message, cookie: resCookie } = res.data
 
       switch (code) {
@@ -304,11 +304,11 @@ const generateQrCode = async () => {
   qrCodeStatus.value = '正在生成二维码...'
 
   try {
-    const keyRes = await request.get(`/qr-key`, { params: { timestamp: Date.now() } })
+    const keyRes = await request.get(`/api/user/qr-key`, { params: { timestamp: Date.now() } })
     if (!keyRes.data.success) throw new Error(keyRes.data.errorMessage || '获取二维码 Key 失败')
     
     const qrKey = keyRes.data.unikey
-    const imgRes = await request.get(`/qr-create`, { params: { key: qrKey, timestamp: Date.now() } })
+    const imgRes = await request.get(`/api/user/qr-create`, { params: { key: qrKey, timestamp: Date.now() } })
     if (!imgRes.data.success) throw new Error(imgRes.data.errorMessage || '生成二维码失败')
 
     qrCodeKey.value = qrKey

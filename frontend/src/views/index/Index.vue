@@ -337,7 +337,7 @@ const onInputBlur = () => { isTyping.value = false }
 const loadPlayHistory = () => {
   const userId = localStorage.getItem('music_userId')
   if (userId) {
-    request.get('/play-history', { params: { userId } })
+    request.get('/api/music/play-history', { params: { userId } })
       .then(res => {
         if (Array.isArray(res.data)) {
           playHistory.value = res.data
@@ -352,7 +352,7 @@ const clearPlayHistory = () => {
   if (!userId) return
   
   if (confirm('确定要清空所有播放记录吗？一旦清空将无法恢复。')) {
-    request.delete(`/play-history?userId=${userId}`)
+    request.delete(`/api/music/play-history?userId=${userId}`)
       .then(() => {
         playHistory.value = []
       })

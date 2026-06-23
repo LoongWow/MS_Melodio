@@ -21,12 +21,6 @@ zuul:
       serviceId: user-service
       stripPrefix: false
 
-    # 音乐服务路由（新增）
-    music-service:
-      path: /api/music/**
-      serviceId: music-service
-      stripPrefix: false
-
     # AI 服务路由
     ai-chat:
       path: /api/music/chat
@@ -51,6 +45,12 @@ zuul:
     ai-service:
       path: /api/ai/**
       serviceId: ai-service
+      stripPrefix: false
+
+    # 音乐服务路由（放在 AI 服务路由后面，以防止前缀覆盖）
+    music-service:
+      path: /api/music/**
+      serviceId: music-service
       stripPrefix: false
   host:
     connect-timeout-millis: 60000

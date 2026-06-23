@@ -19,7 +19,7 @@ export function useChat(options) {
   }
 
   const loadGreeting = (userId) => {
-    request.get(`/greeting`, { params: { userId: Number(userId) } })
+    request.get(`/api/music/greeting`, { params: { userId: Number(userId) } })
       .then(res => {
         const reply = res.data?.reply || ''
         const songs = res.data?.songs || []
@@ -68,7 +68,7 @@ export function useChat(options) {
     isAiThinking.value = true
     scrollChatToBottom()
 
-    request.post(`/chat`, { message, userId: Number(userId) })
+    request.post(`/api/music/chat`, { message, userId: Number(userId) })
       .then(res => {
         isAiThinking.value = false
         

@@ -52,7 +52,7 @@ const search = async () => {
 
   loading.value = true
   try {
-    const res = await request.get(`/search`, {
+    const res = await request.get(`/api/music/search`, {
       params: { keywords: keyword.value, userId: Number(userId) }
     })
     songs.value = res.data?.songs || []

@@ -49,7 +49,7 @@ export function useLyrics(options) {
   }
 
   const loadLyric = (songId) => {
-    request.get(`/lyric/new`, { params: { id: songId } })
+    request.get(`/api/music/lyric/new`, { params: { id: songId } })
       .then(res => {
         const yrc = res.data?.yrc?.lyric
         const lrc = res.data?.lrc?.lyric
