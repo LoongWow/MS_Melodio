@@ -370,7 +370,14 @@ const switchPlayerTab = (t) => {
   }
 }
 const seekToLyric = (timeMs, idx) => { seekToAudio(timeMs / 1000); currentLyricIndex.value = idx }
-const playHistoryItem = (item) => { loadAndPlayById(item.songId) }
+const playHistoryItem = (item) => {
+  let idx = queue.value.findIndex(q => q.id === item.songId)
+  if (idx === -1) {
+    queue.value.push({ id: item.songId, title: item.songName, artist: item.artist })
+    idx = queue.value.length - 1
+  }
+  loadAndPlayTrack(queue.value[idx], idx)
+}
 
 </script>
 

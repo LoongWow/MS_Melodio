@@ -104,6 +104,7 @@ export function useAudioPlayer(options) {
 
   const loadAndPlayTrack = (track, index) => {
     if (!track) return
+    if (audio) audio.pause()
     const userId = localStorage.getItem('music_userId')
     console.log('准备播放队列歌曲', track)
 
