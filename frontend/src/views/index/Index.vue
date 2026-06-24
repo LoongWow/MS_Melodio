@@ -171,6 +171,7 @@
               <div class="player-tabs">
                 <span class="tab" :class="{ active: playerTab === 0 }" @click="switchPlayerTab(0)">LYRICS</span>
                 <span class="tab" :class="{ active: playerTab === 1 }" @click="switchPlayerTab(1)">HISTORY</span>
+                <span class="tab" :class="{ active: playerTab === 2 }" @click="switchPlayerTab(2)">RANK</span>
               </div>
               <span v-show="playerTab === 1 && playHistory.length > 0" class="clear-history-btn" @click="clearPlayHistory">清空历史</span>
               <div class="drawer-close-btn" @click="closePlayerView">▼</div>
@@ -195,17 +196,26 @@
 
               <div v-show="playerTab === 1" class="scroll-view history-view">
                 <div v-if="playHistory.length === 0" class="empty-hint">暂无播放记录</div>
-                <div 
-                  class="queue-item" 
-                  v-for="(item, index) in playHistory" 
-                  :key="item.id" 
-                  @click="playHistoryItem(item)" 
+                <div
+                  class="queue-item"
+                  v-for="(item, index) in playHistory"
+                  :key="item.id"
+                  @click="playHistoryItem(item)"
                 >
                   <div class="queue-left">
                     <span class="queue-index">{{ index + 1 }}</span>
                     <span class="queue-title">{{ item.songName }}</span>
                   </div>
                   <span class="queue-artist">{{ item.artist }}</span>
+                </div>
+              </div>
+
+              <div v-show="playerTab === 2" class="scroll-view rank-view">
+                <div class="rank-hint">
+                  <div class="rank-hint-icon">★</div>
+                  <div class="rank-hint-title">热门榜单</div>
+                  <div class="rank-hint-desc">查看全站用户最喜爱的歌曲</div>
+                  <div class="rank-go-btn" @click="goToRank">进入榜单 →</div>
                 </div>
               </div>
 
@@ -323,6 +333,25 @@ onMounted(() => {
     isLoggedIn.value = true
     loadGreeting(userId)
   }
+
+  // 检查是否从排行榜页面返回，如果是则播放选中的歌曲
+  const songFromRank = sessionStorage.getItem('play_song_from_rank')
+  if (songFromRank) {
+    try {
+      const songData = JSON.parse(songFromRank)
+      // 添加到队列并播放
+      const existingIndex = queue.value.findIndex(q => q.id === songData.id)
+      if (existingIndex === -1) {
+        queue.value.push(songData)
+        loadAndPlayTrack(songData, queue.value.length - 1)
+      } else {
+        loadAndPlayTrack(queue.value[existingIndex], existingIndex)
+      }
+      sessionStorage.removeItem('play_song_from_rank')
+    } catch (e) {
+      console.error('播放排行榜歌曲失败', e)
+    }
+  }
 })
 
 onUnmounted(() => {
@@ -363,11 +392,15 @@ const clearPlayHistory = () => {
   }
 }
 
-const switchPlayerTab = (t) => { 
-  playerTab.value = t 
+const switchPlayerTab = (t) => {
+  playerTab.value = t
   if (t === 1) {
     loadPlayHistory()
   }
+}
+
+const goToRank = () => {
+  router.push('/rank')
 }
 const seekToLyric = (timeMs, idx) => { seekToAudio(timeMs / 1000); currentLyricIndex.value = idx }
 const playHistoryItem = (item) => {

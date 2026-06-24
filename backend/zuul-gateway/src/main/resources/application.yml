@@ -21,6 +21,12 @@ zuul:
       serviceId: user-service
       stripPrefix: false
 
+    # 排行榜服务路由
+    rank-service:
+      path: /api/rank/**
+      serviceId: rank-service
+      stripPrefix: false
+
     # AI 服务路由
     ai-chat:
       path: /api/music/chat
