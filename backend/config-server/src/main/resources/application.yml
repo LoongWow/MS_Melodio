@@ -10,7 +10,7 @@ spring:
     config:
       server:
         native:
-          search-locations: classpath:/config-repo
+          search-locations: file:///E:/Desktop/msMelo/MS_Melodio/msconfigs/
 
 eureka:
   client:
