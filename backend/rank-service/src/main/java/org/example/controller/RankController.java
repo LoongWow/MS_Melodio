@@ -10,8 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rank")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/rank")
 public class RankController {
 
     @Autowired
