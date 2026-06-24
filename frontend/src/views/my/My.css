@@ -63,18 +63,24 @@
 .container::after {
   content: "";
   position: absolute;
-  inset: -150px;
+  /* 使用正方形且足够大的尺寸，确保旋转时完全覆盖 */
+  width: 200vmax;
+  height: 200vmax;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: conic-gradient(from 0deg, #ff00ea, #00d4ff, #8a2be2, #00d4ff, #ff00ea);
   filter: blur(80px);
   opacity: 0.35;
   z-index: -1;
   animation: rotateGlow 12s linear infinite;
   pointer-events: none;
+  will-change: transform;
 }
 
 @keyframes rotateGlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* 复原点阵背景图案 */

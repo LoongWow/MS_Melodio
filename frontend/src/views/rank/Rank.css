@@ -58,7 +58,12 @@
 .container::after {
   content: "";
   position: absolute;
-  inset: -150px;
+  /* 使用正方形且足够大的尺寸，确保旋转时完全覆盖 */
+  width: 200vmax;
+  height: 200vmax;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: conic-gradient(
     from 0deg,
     var(--genre-primary),
@@ -72,13 +77,12 @@
   z-index: -1;
   animation: rotateGlow var(--genre-animation-speed) linear infinite;
   pointer-events: none;
-  transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
 @keyframes rotateGlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* Background Dot Pattern */
