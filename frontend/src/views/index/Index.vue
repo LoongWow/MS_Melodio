@@ -165,7 +165,7 @@
           
           <!-- ====== LYRICS DRAWER ====== -->
           <div class="drawer-mask" :class="{ open: showPlayerView }" @click="closePlayerView"></div>
-          <div class="lyrics-drawer" :class="{ open: showPlayerView }" @click.stop>
+          <div class="lyrics-drawer" :class="{ open: showPlayerView, playing: isPlaying }" @click.stop>
             
             <div class="drawer-header">
               <div class="player-tabs">
@@ -229,7 +229,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '@/utils/request'
 import { useCanvasClock } from '../../composables/useCanvasClock'
@@ -391,6 +391,12 @@ onUnmounted(() => {
 
 const openPlayerView = () => { showPlayerView.value = true; setTimeout(scrollChatToBottom, 400) }
 const closePlayerView = () => { showPlayerView.value = false; setTimeout(() => playerTab.value = 0, 410) }
+
+watch(isPlaying, (newVal) => {
+  if (newVal && !showPlayerView.value) {
+    openPlayerView()
+  }
+})
 const toggleQueue = () => { showQueue.value = !showQueue.value; queueHeight.value = showQueue.value ? 120 : 0 }
 const onInputFocus = () => { isTyping.value = true }
 const onInputBlur = () => { isTyping.value = false }

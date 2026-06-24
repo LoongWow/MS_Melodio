@@ -828,7 +828,6 @@
 .lyrics-drawer::before {
   content: "";
   position: absolute;
-  /* 使用正方形且足够大的尺寸，确保旋转时完全覆盖 */
   width: 200vmax;
   height: 200vmax;
   top: 50%;
@@ -844,6 +843,40 @@
   pointer-events: none;
   z-index: 0;
   will-change: transform;
+}
+
+/* 播放时切换为流动波浪效果 (Liquid Wave Rhythm) */
+.lyrics-drawer.playing::before,
+.lyrics-drawer.playing::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 200vw;
+  height: 200vw;
+  margin-left: -100vw;
+  margin-top: -35vh; /* 波浪基准线提升，结合重度模糊填满黑边 */
+  background: var(--genre-secondary); /* 使用项目风格变量，不再硬编码颜色 */
+  border-radius: 40%;
+  animation: waveRhythm 14s infinite linear;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(60px); /* 恢复重度模糊，使光晕自然过渡至抽屉顶部，消除黑边 */
+  opacity: 0.15; /* 降低透明度，解决太鲜艳的问题，保留项目一贯的低调氛围 */
+}
+
+.lyrics-drawer.playing::after {
+  margin-top: -28vh;
+  background: var(--genre-primary);
+  border-radius: 45%;
+  animation: waveRhythm 18s infinite linear reverse;
+  opacity: 0.1;
+}
+
+/* 律动波浪旋转动画 */
+@keyframes waveRhythm {
+  0% { transform: rotate(0deg) translateZ(0); }
+  100% { transform: rotate(360deg) translateZ(0); }
 }
 
 @keyframes rotateGlowDrawer {
@@ -934,10 +967,31 @@
   );
   opacity: 0.2;
   filter: blur(50px);
-  /* 保持正方形大小，移除 inset */
   width: 200vmax;
   height: 200vmax;
   border-radius: 0;
+}
+
+/* 暗色主题播放时的波浪效果 - 更强的律动感 (Dark Liquid Wave) */
+.page-wrapper.dark .lyrics-drawer.playing::before {
+  width: 200vw;
+  height: 200vw;
+  border-radius: 40%;
+  background: var(--genre-secondary);
+  filter: blur(80px); /* 暗色模式下加大模糊半径，氛围更柔和 */
+  opacity: 0.25; /* 降低饱和度，避免过于鲜艳刺眼 */
+  animation: waveRhythm 14s infinite linear;
+}
+
+.page-wrapper.dark .lyrics-drawer.playing::after {
+  display: block; /* 覆盖原本的 display: none */
+  width: 200vw;
+  height: 200vw;
+  border-radius: 45%;
+  background: var(--genre-primary);
+  filter: blur(80px);
+  opacity: 0.2;
+  animation: waveRhythm 18s infinite linear reverse;
 }
 
 .page-wrapper.dark .lyrics-drawer::after {
