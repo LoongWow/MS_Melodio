@@ -45,7 +45,10 @@
               <div class="dot green-dot"></div>
               <span>{{ tabDescriptions[currentTab] }}</span>
             </div>
-            <span class="info-right">REAL-TIME</span>
+            <div class="info-right">
+              <span class="real-time-text">REAL-TIME</span>
+              <span class="refresh-btn" @click="refreshRank" :class="{ refreshing: isRefreshing }">⟳</span>
+            </div>
           </div>
 
           <div class="divider"></div>
@@ -110,6 +113,7 @@ const { theme, toggleTheme } = useTheme()
 const currentTab = ref('hot')
 const rankList = ref([])
 const isLoading = ref(false)
+const isRefreshing = ref(false)
 const toastMessage = ref('')
 
 const tabDescriptions = {
@@ -167,20 +171,44 @@ const switchTab = (tab) => {
   loadRankData(tab)
 }
 
+const refreshRank = async () => {
+  if (isRefreshing.value) return // 防止重复点击
+
+  isRefreshing.value = true
+  try {
+    // 调用后端接口清除所有榜单缓存
+    await request.post('/api/rank/refresh-all')
+    // 重新加载当前榜单数据
+    await loadRankData(currentTab.value)
+    showToast('所有榜单已刷新')
+  } catch (error) {
+    console.error('刷新排行榜失败:', error)
+    showToast('刷新失败')
+  } finally {
+    // 延迟恢复按钮状态，让动画完整播放
+    setTimeout(() => {
+      isRefreshing.value = false
+    }, 600)
+  }
+}
+
 const playSong = (item) => {
-  // 将歌曲信息存储到 sessionStorage，供主页播放器读取
+  // 将歌曲信息存储到 localStorage，主页会检测并添加
   const songData = {
     id: item.songId,
     title: item.songName,
-    artist: item.artist
+    artist: item.artist,
+    timestamp: Date.now()
   }
-  sessionStorage.setItem('play_song_from_rank', JSON.stringify(songData))
-  showToast('已添加到播放队列')
 
-  // 跳转回主页
-  setTimeout(() => {
-    router.push('/')
-  }, 800)
+  // 使用一个随机key避免覆盖，主页会处理所有待添加的歌曲
+  const key = `add_to_queue_${Date.now()}_${Math.random()}`
+  localStorage.setItem(key, JSON.stringify(songData))
+
+  // 触发 storage 事件（如果在同一个页面，需要手动触发自定义事件）
+  window.dispatchEvent(new CustomEvent('addToQueue', { detail: songData }))
+
+  showToast('已添加到播放队列')
 }
 
 onMounted(() => {

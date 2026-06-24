@@ -292,12 +292,63 @@
 }
 
 .info-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.real-time-text {
   color: #00d4ff;
   font-family: monospace;
 }
 
-.page-wrapper.light .info-right {
+.page-wrapper.light .real-time-text {
   color: #00bcd4;
+}
+
+.refresh-btn {
+  font-size: 18px;
+  color: #00d4ff;
+  font-family: monospace;
+  cursor: pointer;
+  transition: all 0.3s;
+  user-select: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refresh-btn:hover {
+  color: #00ffff;
+  transform: scale(1.1);
+}
+
+.refresh-btn:active {
+  transform: scale(0.95);
+}
+
+.refresh-btn.refreshing {
+  animation: rotate 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.page-wrapper.light .refresh-btn {
+  color: #00bcd4;
+}
+
+.page-wrapper.light .refresh-btn:hover {
+  color: #00acc1;
 }
 
 /* Loading */

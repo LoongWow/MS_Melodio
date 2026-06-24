@@ -32,6 +32,34 @@ public class RankController {
     }
 
     /**
+     * 刷新所有排行榜数据（清除所有缓存）
+     */
+    @PostMapping("/refresh-all")
+    public ResponseEntity<String> refreshAllRanks() {
+        try {
+            rankService.clearAllCache();
+            return ResponseEntity.ok("所有榜单刷新成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("刷新失败");
+        }
+    }
+
+    /**
+     * 刷新排行榜数据（清除缓存）
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshRank(@RequestParam(defaultValue = "hot") String type) {
+        try {
+            rankService.clearCache(type);
+            return ResponseEntity.ok("刷新成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("刷新失败");
+        }
+    }
+
+    /**
      * 清除排行榜缓存（管理员接口）
      */
     @DeleteMapping("/cache")

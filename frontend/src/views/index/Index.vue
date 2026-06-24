@@ -334,25 +334,56 @@ onMounted(() => {
     loadGreeting(userId)
   }
 
-  // 检查是否从排行榜页面返回，如果是则播放选中的歌曲
-  const songFromRank = sessionStorage.getItem('play_song_from_rank')
-  if (songFromRank) {
-    try {
-      const songData = JSON.parse(songFromRank)
-      // 添加到队列并播放
-      const existingIndex = queue.value.findIndex(q => q.id === songData.id)
-      if (existingIndex === -1) {
-        queue.value.push(songData)
-        loadAndPlayTrack(songData, queue.value.length - 1)
-      } else {
-        loadAndPlayTrack(queue.value[existingIndex], existingIndex)
-      }
-      sessionStorage.removeItem('play_song_from_rank')
-    } catch (e) {
-      console.error('播放排行榜歌曲失败', e)
-    }
-  }
+  // 监听来自排行榜的添加队列事件
+  window.addEventListener('addToQueue', handleAddToQueue)
+
+  // 检查 localStorage 中是否有待添加的歌曲（页面刷新或重新进入）
+  checkPendingSongs()
 })
+
+onUnmounted(() => {
+  if (timeInterval) clearInterval(timeInterval);
+  window.removeEventListener('addToQueue', handleAddToQueue)
+})
+
+// 处理添加到队列的事件
+const handleAddToQueue = (event) => {
+  const songData = event.detail
+  addSongToQueue(songData)
+}
+
+// 添加歌曲到队列
+const addSongToQueue = (songData) => {
+  const exists = queue.value.findIndex(q => q.id === songData.id)
+  if (exists === -1) {
+    queue.value.push({
+      id: songData.id,
+      title: songData.title,
+      artist: songData.artist
+    })
+  }
+}
+
+// 检查并处理待添加的歌曲
+const checkPendingSongs = () => {
+  const keys = Object.keys(localStorage)
+  const addKeys = keys.filter(key => key.startsWith('add_to_queue_'))
+
+  addKeys.forEach(key => {
+    try {
+      const songData = JSON.parse(localStorage.getItem(key))
+      // 只处理5分钟内的请求
+      if (songData && Date.now() - songData.timestamp < 5 * 60 * 1000) {
+        addSongToQueue(songData)
+      }
+      // 清除已处理的项
+      localStorage.removeItem(key)
+    } catch (e) {
+      console.error('处理待添加歌曲失败', e)
+      localStorage.removeItem(key)
+    }
+  })
+}
 
 onUnmounted(() => {
   if (timeInterval) clearInterval(timeInterval);
