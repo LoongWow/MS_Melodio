@@ -1,4 +1,5 @@
 package org.example.config;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RefreshScope
 public class AiConfig {
 
     @Bean

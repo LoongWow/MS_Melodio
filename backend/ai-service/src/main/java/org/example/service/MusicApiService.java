@@ -1,4 +1,5 @@
 package org.example.service;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RefreshScope
 public class MusicApiService {
 
     private static final Logger log = LoggerFactory.getLogger(MusicApiService.class);

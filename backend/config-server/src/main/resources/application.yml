@@ -11,8 +11,25 @@ spring:
       server:
         native:
           search-locations: file:///E:/Desktop/msMelo/MS_Melodio/msconfigs/
+    stream:
+      rabbit:
+        bindings:
+          springCloudBusInput:
+            consumer:
+              exclusive: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "bus-refresh"

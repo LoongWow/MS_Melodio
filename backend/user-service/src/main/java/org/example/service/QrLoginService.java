@@ -1,4 +1,5 @@
 package org.example.service;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +31,7 @@ import java.util.Optional;
  * 4. 获取登录 Cookie
  */
 @Service
+@RefreshScope
 public class QrLoginService {
 
     private static final Logger log = LoggerFactory.getLogger(QrLoginService.class);

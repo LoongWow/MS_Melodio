@@ -1,4 +1,5 @@
 package org.example.service;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
  * 3. 验证 Cookie 有效性
  */
 @Service
+@RefreshScope
 public class NeteaseCookieService {
 
     private static final Logger log = LoggerFactory.getLogger(NeteaseCookieService.class);

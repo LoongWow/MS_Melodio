@@ -1,4 +1,5 @@
 package org.example.service;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.embedding.Embedding;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RefreshScope
 public class RagService {
 
     private static final Logger log = LoggerFactory.getLogger(RagService.class);

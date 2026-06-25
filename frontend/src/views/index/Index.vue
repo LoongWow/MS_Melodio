@@ -229,7 +229,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, onActivated } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '@/utils/request'
 import { useCanvasClock } from '../../composables/useCanvasClock'
@@ -341,6 +341,14 @@ onMounted(() => {
   checkPendingSongs()
 })
 
+onActivated(() => {
+  const userId = localStorage.getItem('music_userId')
+  if (userId && !isLoggedIn.value) {
+    isLoggedIn.value = true
+    loadGreeting(userId)
+  }
+})
+
 onUnmounted(() => {
   if (timeInterval) clearInterval(timeInterval);
   window.removeEventListener('addToQueue', handleAddToQueue)
@@ -398,8 +406,19 @@ watch(isPlaying, (newVal) => {
   }
 })
 const toggleQueue = () => { showQueue.value = !showQueue.value; queueHeight.value = showQueue.value ? 120 : 0 }
-const onInputFocus = () => { isTyping.value = true }
-const onInputBlur = () => { isTyping.value = false }
+const scrollToBottomDuringAnimation = () => {
+  const start = performance.now()
+  const animate = (time) => {
+    scrollChatToBottom()
+    if (time - start < 150) {
+      requestAnimationFrame(animate)
+    }
+  }
+  requestAnimationFrame(animate)
+}
+
+const onInputFocus = () => { isTyping.value = true; scrollToBottomDuringAnimation() }
+const onInputBlur = () => { isTyping.value = false; scrollToBottomDuringAnimation() }
 const loadPlayHistory = () => {
   const userId = localStorage.getItem('music_userId')
   if (userId) {

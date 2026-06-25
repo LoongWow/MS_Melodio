@@ -1,4 +1,5 @@
 package org.example.service;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
  * 3. 自动获取 Cookie
  */
 @Service
+@RefreshScope
 public class CaptchaLoginService {
 
     private static final Logger log = LoggerFactory.getLogger(CaptchaLoginService.class);
